@@ -1,12 +1,11 @@
-const Header = () => {
-   return (
-    <header className="mt-8 w-full
+const Header = () => (
+  <header className="mt-8 w-full
     flex flex-col md:flex-row justify-center items-center md:items-end">
-      <h1 className="basis-3/4 text-6xl md:ml-20">
+    <h1 className="basis-3/4 text-6xl md:ml-20">
         Amaro Builder
-      </h1>
+    </h1>
 
-      <div className="basis-1/4 flex flex-col gap-4 items-center md:items-start md:mr-20">
+    <div className="basis-1/4 flex flex-col gap-4 items-center md:items-start md:mr-20">
 
       <div className="flex flex-row gap-4">
         Username Logged In
@@ -26,9 +25,8 @@ const Header = () => {
           Recipes
         </a>
       </nav>
-      </div>
-    </header>
-  )
-}
+    </div>
+  </header>
+)
 
 export default Header

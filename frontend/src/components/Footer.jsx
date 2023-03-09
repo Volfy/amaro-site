@@ -1,7 +1,7 @@
 const Footer = () => (
   <footer className="bottom-0 w-full flex flex-col justify-evenly items-center mb-6">
     <div>
-      Created by <a className="text-blue-400" href="https://sammut.dev">Andre 'Sasha' Sammut</a>.
+      Created by <a className="text-blue-400" href="https://sammut.dev">Andre &apos;Sasha&apos; Sammut</a>.
       Code available on <a className="text-blue-400" href="http://github.com/Volfy/amaro-site">
         GitHub
       </a>.
