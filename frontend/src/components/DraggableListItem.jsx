@@ -17,14 +17,17 @@ const DraggableListItem = (props) => {
   }
 
   return (
-    <li ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {props.content}
+    <li ref={setNodeRef} style={style}>
+      <div className='inline' {...attributes} {...listeners}>{props.dragHandle}</div>
+      &nbsp;
+      {props.children}
     </li>
   ) 
 }
 DraggableListItem.propTypes = {
   id: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
+  children: PropTypes.element.isRequired,
+  dragHandle: PropTypes.string.isRequired,
 }
 
 export default DraggableListItem
