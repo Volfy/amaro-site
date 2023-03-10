@@ -9,15 +9,22 @@ const Title = ({form}) => {
     <>
       <input type="text" 
         value={title}
-        onChange={event => setTitle(event.target.value)}
+        onInput={event => {
+          setTitle(event.target.value)
+        }}
+        onKeyDown={event => {
+          if(event.key === 'Enter') {
+            event.target.blur()
+          }
+        }}
         className='text-4xl flex-shrink h-16'
-        form={form}
+        form={form || null}
       />
     </>
   )
 }
 Title.propTypes = {
-  form: PropTypes.string.isRequired,
+  form: PropTypes.string,
 }
 
 export default Title

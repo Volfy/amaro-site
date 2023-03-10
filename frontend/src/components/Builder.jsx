@@ -30,7 +30,7 @@ const fakeData = [
 const Builder = () => {
   return (
     <>
-      <form id="recipe" action="" className='hidden' />
+      <form id="recipe" onSubmit={event => event.preventDefault()} className='hidden' />
       <Title form='recipe' className='flex-shrink'/>
       <div>
         <h2 className='text-2xl'>Ingredients</h2>
@@ -49,7 +49,7 @@ const Builder = () => {
       </div>
 
 
-      <button type="submit" onClick={event => event.preventDefault()}>Add Recipe</button>
+      {/*<button type="submit" onClick={event => event.preventDefault()}>Add Recipe</button>*/}
     </>
  
   )
