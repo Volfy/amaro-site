@@ -17,7 +17,7 @@ const DraggableListItem = (props) => {
   }
 
   return (
-    <li ref={setNodeRef} style={style}>
+    <li ref={setNodeRef} style={style} >
       <div className='inline' {...attributes} {...listeners}>{props.dragHandle}</div>
       &nbsp;
       {props.children}
@@ -26,8 +26,11 @@ const DraggableListItem = (props) => {
 }
 DraggableListItem.propTypes = {
   id: PropTypes.string.isRequired,
-  children: PropTypes.element.isRequired,
-  dragHandle: PropTypes.string.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element)
+  ]).isRequired,
+  dragHandle: PropTypes.any.isRequired,
 }
 
 export default DraggableListItem

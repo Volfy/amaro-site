@@ -8,7 +8,7 @@ const Title = () => {
   return <TextInput 
     state={title} 
     setter={setTitle} 
-    classes='text-4xl flex-shrink h-16' 
+    classes='text-4xl h-16' 
   />
 }
 

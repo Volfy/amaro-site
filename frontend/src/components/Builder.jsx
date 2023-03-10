@@ -30,19 +30,19 @@ const fakeData = [
 const Builder = () => {
   return (
     <>
-      <Title className='flex-shrink'/>
-      <div>
+      <Title className='w-full basis-1/12'/>
+      <div className='w-full basis-5/12 ml-1'>
         <h2 className='text-2xl'>Ingredients</h2>
         <IngredientsTable data={fakeData}/>
 
       </div>
 
-      <div>
+      <div className='w-full basis-3/12 ml-1'>
         <h2 className='text-2xl'>Process</h2>
         <Process />
       </div>
 
-      <div>
+      <div className='w-full basis-3/12 ml-1'>
         <h2 className='text-2xl'>Tasting Notes / Description</h2>
         <Notes />
       </div>

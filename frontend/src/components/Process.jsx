@@ -58,7 +58,8 @@ const Process = () => {
           {steps.map((step, index) => {
             return (
               <DraggableListItem key={step.id} id={step.id} dragHandle={`${index + 1}.`}>
-                <TextInput state={step.content} setter={(newVal) => handleChangeStep(step.id, newVal)}/>
+                <TextInput state={step.content} setter={(newVal) => handleChangeStep(step.id, newVal)}
+                  classes='w-3/4'/>
                 <button onClick={() => handleRemoveStep(step.id)}>&#128465;</button>
               </DraggableListItem>  
             )
