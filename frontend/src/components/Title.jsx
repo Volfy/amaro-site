@@ -1,30 +1,15 @@
-import { PropTypes } from 'prop-types'
+import TextInput from './TextInput'
 import { useState } from 'react'
 
-const Title = ({form}) => {
+const Title = () => {
 
   const [title, setTitle] = useState('Recipe Title')
 
-  return (
-    <>
-      <input type="text" 
-        value={title}
-        onInput={event => {
-          setTitle(event.target.value)
-        }}
-        onKeyDown={event => {
-          if(event.key === 'Enter') {
-            event.target.blur()
-          }
-        }}
-        className='text-4xl flex-shrink h-16'
-        form={form || null}
-      />
-    </>
-  )
-}
-Title.propTypes = {
-  form: PropTypes.string,
+  return <TextInput 
+    state={title} 
+    setter={setTitle} 
+    classes='text-4xl flex-shrink h-16' 
+  />
 }
 
 export default Title
