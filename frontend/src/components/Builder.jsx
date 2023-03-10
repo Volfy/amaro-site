@@ -1,4 +1,6 @@
 import Title from './Title'
+import Process from './Process'
+import Notes from './Notes'
 import IngredientsTable from './IngredientsTable'
 
 const fakeData = [
@@ -38,12 +40,12 @@ const Builder = () => {
 
       <div>
         <h2 className='text-2xl'>Process</h2>
-        a list, with always an addition possible
+        <Process />
       </div>
 
       <div>
         <h2 className='text-2xl'>Tasting Notes / Description</h2>
-        large text field
+        <Notes />
       </div>
 
 
