@@ -5,9 +5,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { PropTypes } from 'prop-types'
 import TextInput from './TextInput'
 import CreatableSelect from 'react-select/Creatable'
-
-const generateId = () => `${Math.floor((Math.random()*1000))}`
-
+import generateId from '../utils/generateId'
 
 {/* data structure
 th>
