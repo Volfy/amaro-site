@@ -1,6 +1,6 @@
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { useSortable, arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { CSS } from '@dnd-kit/utilities'
 import { PropTypes } from 'prop-types'
 import TextInput from './TextInput'
@@ -21,7 +21,7 @@ th>
 <th /> 
 */}
 
-const fakeIng = [
+let fakeIng = [
   {
     name: 'Wormwood',
     description: 'Bittering agent',
@@ -72,7 +72,7 @@ const DraggableRow = (props) => {
         <TextInput
           state={amount}
           setter={(newAmt) => props.changeAmount(id, newAmt)}
-          classes='w-12'
+          classes='w-12 text-right'
         />
         {isDry ? 'g' : 'ml'}
       </td>
@@ -98,17 +98,20 @@ fakeIng.forEach(i => {
   defaultOptions.push(opt)
 })
 
-const CreatableIngredient = () => {  
-  const [options, setOptions] = useState(defaultOptions)
+const CreatableIngredient = ({handleBlur, options, setOptions}) => {  
   const [value, setValue] = useState({})
 
   const handleCreate = (inputValue) => {
-    setTimeout(() => {
-      const newOption = createOption(inputValue, generateId())
-      setOptions(options.concat(newOption))
-      setValue(newOption)
-    }, 1000)
-
+    const newOption = createOption(inputValue, generateId())
+    setOptions(options.concat(newOption))
+    fakeIng.push({
+      id: newOption.id,
+      name: newOption.label,
+      isDry: false,
+      amount: '0',
+      description: '',
+    })
+    setValue(newOption)
   }
 
   return (
@@ -116,15 +119,22 @@ const CreatableIngredient = () => {
       isClearable
       onChange={newValue => setValue(newValue)}
       onCreateOption={handleCreate}
+      onBlur={() => handleBlur(value.id)}
       options={options}
       value={value}
     />
   )
 }
+CreatableIngredient.propTypes = {
+  handleBlur: PropTypes.func.isRequired,
+  options: PropTypes.array.isRequired,
+  setOptions: PropTypes.func.isRequired,
+}
 
  
 
 const IngredientsTable = () => {
+  const [options, setOptions] = useState(defaultOptions)
   const [ingredients, setIngredients] = useState([])
   const [showIngredientForm, setShowIngredientForm] = useState(false)
 
@@ -153,6 +163,15 @@ const IngredientsTable = () => {
     setIngredients(ingredients.filter(ingredient => ingredient.id !== id))
   }
 
+  const handleIngredientSelection = (id) => {
+    // ensure no duplicates
+    ingredients.filter(i => i.id === id).length
+      ? setIngredients(ingredients)
+      : setIngredients(ingredients.concat(fakeIng.filter(i => i.id === id)))
+    setShowIngredientForm(false)
+  }
+
+
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -160,7 +179,7 @@ const IngredientsTable = () => {
     >
       <table className='w-full'>
         <thead>
-          <tr>
+          <tr className='text-left'>
             <th />
             <th>Name</th>
             <th>Description</th>
@@ -188,7 +207,7 @@ const IngredientsTable = () => {
           <tr>
             <td colSpan='100%' className='text-center'>
               {showIngredientForm 
-                ? <CreatableIngredient /> 
+                ? <CreatableIngredient handleBlur={handleIngredientSelection} options={options} setOptions={setOptions}/> 
                 : <button onClick={() => setShowIngredientForm(true)}>Add an Ingredient</button> }
             </td>
           </tr>
@@ -197,10 +216,6 @@ const IngredientsTable = () => {
       </table>
     </DndContext>
   )
-}
-
-IngredientsTable.propTypes = {
-  data: PropTypes.array.isRequired,
 }
 
 export default IngredientsTable
