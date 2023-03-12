@@ -89,15 +89,15 @@ DraggableRow.propTypes = {
 
 // PREPARE OPTIONS
 
-const createOption = (label, id) => ({
+const createOption = (label, description, id) => ({
   label,
   id,
-  value: label.toLowerCase().replace(/\W/g, ''),
+  value: label.toLowerCase().replace(/\W/g, '')+description.toLowerCase().replace(/\W/g, ''),
 })
 
 let defaultOptions = []
 fakeIng.forEach(i => {
-  const opt = createOption(i.name, i.id)
+  const opt = createOption(i.name, i.description, i.id)
   defaultOptions.push(opt)
 })
 
@@ -107,7 +107,7 @@ const CreatableIngredient = ({handleBlur, options, setOptions}) => {
   const [value, setValue] = useState({})
 
   const handleCreate = (inputValue) => {
-    const newOption = createOption(inputValue, generateId())
+    const newOption = createOption(inputValue, '', generateId())
     setOptions(options.concat(newOption))
     fakeIng.push({
       id: newOption.id,
@@ -119,12 +119,17 @@ const CreatableIngredient = ({handleBlur, options, setOptions}) => {
     setValue(newOption)
   }
 
+  const filterOptions = (candidate, input) => {
+    return candidate.data.__isNew__ || candidate.value.includes(input.toLowerCase())
+  }
+
   return (
     <CreatableSelect
       isClearable
       onChange={newValue => setValue(newValue)}
       onCreateOption={handleCreate}
-      onBlur={() => handleBlur(value.id)}
+      onBlur={() => value ? handleBlur(value.id) : handleBlur(null)}
+      filterOption={filterOptions}
       options={options}
       value={value}
     />
@@ -175,6 +180,9 @@ const IngredientsTable = () => {
   }
 
   const handleIngredientSelection = (id) => {
+    if(id === null){
+      setShowIngredientForm(false)
+    }
     // ensure no duplicates
     ingredients.filter(i => i.id === id).length
       ? dispatchIngredients(ingredients)
