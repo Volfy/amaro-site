@@ -1,15 +1,23 @@
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState } from 'react'
+import { useContext } from 'react'
 import DraggableListItem from './DraggableListItem'
 import TextInput from './TextInput'
 import generateId from '../utils/generateId'
+import BuilderContext from '../BuilderContext'
 
 const Notes = () => {
-  const [notes, setNotes] = useState([])
+  const [{notes}, dispatch] = useContext(BuilderContext)
+
+  const dispatchNotes = (val) => {
+    dispatch({
+      type: 'NOTES',
+      payload: val
+    })
+  }
   
   const handleChangeNote = (id, newNoteValue) => {
-    setNotes(notes
+    dispatchNotes(notes
       .map(note => note.id !== id 
         ? note 
         : {
@@ -20,26 +28,24 @@ const Notes = () => {
     )
   }
 
-  const handleAddNote = (newNoteValue) => {
-    setNotes(notes.concat({
-      content: newNoteValue,
+  const handleAddNote = () => {
+    dispatchNotes(notes.concat({
+      content: '...',
       id: generateId()
     }))
   }
 
   const handleRemoveNote = (id) => {
-    setNotes(notes.filter(Note => Note.id !== id))
+    dispatchNotes(notes.filter(Note => Note.id !== id))
   }
 
   const handleDragEnd = (event) => {
     const {active, over} = event
     if(active.id !== over.id) {
-      setNotes((items) => {
-        const ids = items.map(item => item.id)
-        const activeIndex = ids.indexOf(active.id)
-        const overIndex = ids.indexOf(over.id)
-        return arrayMove(notes, activeIndex, overIndex)
-      })
+      const ids = notes.map(item => item.id)
+      const activeIndex = ids.indexOf(active.id)
+      const overIndex = ids.indexOf(over.id)
+      dispatchNotes(arrayMove(notes, activeIndex, overIndex))
     }
   }
 
@@ -64,7 +70,11 @@ const Notes = () => {
             )
           })}
         </SortableContext>
-        <li onClick={() => handleAddNote('...')}>Add a Note</li>
+        <li>
+          <button onClick={handleAddNote}>
+            Add a Note
+          </button>
+        </li>
       </ul>
       
 

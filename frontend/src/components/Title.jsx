@@ -1,13 +1,13 @@
 import TextInput from './TextInput'
-import { useState } from 'react'
+import { useContext } from 'react'
+import BuilderContext from '../BuilderContext'
 
 const Title = () => {
-
-  const [title, setTitle] = useState('Recipe Title')
-
+  const [{title}, dispatch] = useContext(BuilderContext)
+  
   return <TextInput 
     state={title} 
-    setter={setTitle} 
+    setter={(returnedTitle) => dispatch({type: 'TITLE', payload: returnedTitle})} 
     classes='text-4xl h-16' 
   />
 }
