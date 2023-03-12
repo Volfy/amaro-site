@@ -1,11 +1,12 @@
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { useSortable, arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { CSS } from '@dnd-kit/utilities'
 import { PropTypes } from 'prop-types'
 import TextInput from './TextInput'
 import CreatableSelect from 'react-select/Creatable'
 import generateId from '../utils/generateId'
+import BuilderContext from '../BuilderContext'
 
 {/* data structure
 th>
@@ -42,6 +43,8 @@ let fakeIng = [
     id: '3',
   },
 ]
+
+// ROW 
 
 const DraggableRow = (props) => {
   const {
@@ -84,6 +87,8 @@ DraggableRow.propTypes = {
   changeAmount: PropTypes.func.isRequired,
 }
 
+// PREPARE OPTIONS
+
 const createOption = (label, id) => ({
   label,
   id,
@@ -96,6 +101,8 @@ fakeIng.forEach(i => {
   defaultOptions.push(opt)
 })
 
+// AUTOCOMPLETE INPUT
+
 const CreatableIngredient = ({handleBlur, options, setOptions}) => {  
   const [value, setValue] = useState({})
 
@@ -105,7 +112,7 @@ const CreatableIngredient = ({handleBlur, options, setOptions}) => {
     fakeIng.push({
       id: newOption.id,
       name: newOption.label,
-      isDry: false,
+      isDry: true,
       amount: '0',
       description: '',
     })
@@ -129,15 +136,23 @@ CreatableIngredient.propTypes = {
   setOptions: PropTypes.func.isRequired,
 }
 
- 
+// FINAL COMPONENT
 
 const IngredientsTable = () => {
   const [options, setOptions] = useState(defaultOptions)
-  const [ingredients, setIngredients] = useState([])
   const [showIngredientForm, setShowIngredientForm] = useState(false)
+  const [{ingredients}, dispatch] = useContext(BuilderContext)
+
+  const dispatchIngredients = (ingr) => {
+    dispatch({
+      type: 'INGREDIENTS',
+      payload: ingr
+    })
+  }
+
 
   const changeAmount = (id, amount) => {
-    setIngredients(ingredients
+    dispatchIngredients(ingredients
       .map(ingredient=>
         id === ingredient.id
           ? {...ingredient, amount: amount}
@@ -148,24 +163,22 @@ const IngredientsTable = () => {
   const handleDragEnd = (event) => {
     const {active, over} = event
     if(active.id !== over.id) {
-      setIngredients((items) => {
-        const ids = items.map(item => item.id)
-        const activeIndex = ids.indexOf(active.id)
-        const overIndex = ids.indexOf(over.id)
-        return arrayMove(ingredients, activeIndex, overIndex)
-      })
+      const ids = ingredients.map(item => item.id)
+      const activeIndex = ids.indexOf(active.id)
+      const overIndex = ids.indexOf(over.id)
+      dispatchIngredients(arrayMove(ingredients, activeIndex, overIndex))
     }
   }
 
   const handleRemoveIngredient = (id) => {
-    setIngredients(ingredients.filter(ingredient => ingredient.id !== id))
+    dispatchIngredients(ingredients.filter(ingredient => ingredient.id !== id))
   }
 
   const handleIngredientSelection = (id) => {
     // ensure no duplicates
     ingredients.filter(i => i.id === id).length
-      ? setIngredients(ingredients)
-      : setIngredients(ingredients.concat(fakeIng.filter(i => i.id === id)))
+      ? dispatchIngredients(ingredients)
+      : dispatchIngredients(ingredients.concat(fakeIng.filter(i => i.id === id)))
     setShowIngredientForm(false)
   }
 
