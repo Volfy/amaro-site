@@ -1,6 +1,7 @@
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Builder from './components/Builder'
+import { BuilderContextProvider } from './BuilderContext'
 
 
 
@@ -13,7 +14,9 @@ function App() {
       <hr className="w-full h-0.5 my-4 bg-slate-200"/>
 
       <main className="flex-grow w-10/12 self-center my-4 flex flex-col justify-between">
-        <Builder />
+        <BuilderContextProvider>
+          <Builder />
+        </BuilderContextProvider>
       </main>
 
       <hr className="w-full h-0.5 my-4 bg-slate-200"/>

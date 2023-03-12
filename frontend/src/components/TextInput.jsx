@@ -6,7 +6,7 @@ const TextInput = ({state, setter, classes, form}) => {
   
   useEffect(() => {
     setVal(state)
-  }, [])
+  }, [state])
 
   return <input type="text" 
     value={val}
