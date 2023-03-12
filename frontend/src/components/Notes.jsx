@@ -3,8 +3,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 import { useState } from 'react'
 import DraggableListItem from './DraggableListItem'
 import TextInput from './TextInput'
-
-const generateId = () => `${Math.floor((Math.random()*1000))}`
+import generateId from '../utils/generateId'
 
 const Notes = () => {
   const [notes, setNotes] = useState([])
