@@ -5,8 +5,9 @@ import { CSS } from '@dnd-kit/utilities'
 import { PropTypes } from 'prop-types'
 import TextInput from './TextInput'
 import CreatableSelect from 'react-select/Creatable'
-import generateId from '../utils/generateId'
 import BuilderContext from '../BuilderContext'
+import { getIngredients, createIngredient } from '../requests'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 {/* data structure
 th>
@@ -20,35 +21,20 @@ th>
 <th /> 
 */}
 
-let fakeIng = [
-  {
-    name: 'Wormwood',
-    description: 'Bittering agent',
-    amount: '1',
-    isDry: true,
-    id: '1',
-  },
-  {
-    name: 'Vodka',
-    description: 'solvent',
-    amount: '300',
-    isDry: false,
-    id: '2',
-  },
-  {
-    name: 'Orange peel',
-    description: 'citrus fruit',
-    amount: '6',
-    isDry: true,
-    id: '3',
-  },
-]
+// helper functions 
+
+const createOption = (option) => ({
+  ...option,
+  label: option.name,
+  value: option.name.toLowerCase().replace(/\W/g, '')
+    + option.description.toLowerCase().replace(/\W/g, ''),
+})
 
 // ROW 
 
 const DraggableRow = (props) => {
   const {
-    id, name, description, amount, isDry
+    id, name, description, defaultAmount, isDry
   } = props.ingredient
 
   const {
@@ -71,7 +57,7 @@ const DraggableRow = (props) => {
       <td>{description}</td>
       <td>
         <TextInput
-          state={amount}
+          state={defaultAmount+''}
           setter={(newAmt) => props.changeAmount(id, newAmt)}
           classes='w-12 text-right'
         />
@@ -87,74 +73,79 @@ DraggableRow.propTypes = {
   changeAmount: PropTypes.func.isRequired,
 }
 
-// PREPARE OPTIONS
-
-const createOption = (label, description, id) => ({
-  label,
-  id,
-  value: label.toLowerCase().replace(/\W/g, '')+description.toLowerCase().replace(/\W/g, ''),
-})
-
-let defaultOptions = []
-fakeIng.forEach(i => {
-  const opt = createOption(i.name, i.description, i.id)
-  defaultOptions.push(opt)
-})
-
 // AUTOCOMPLETE INPUT
 
-const CreatableIngredient = ({handleBlur, options, setOptions}) => {  
-  const [value, setValue] = useState({})
-
-  const handleCreate = (inputValue) => {
-    const newOption = createOption(inputValue, '', generateId())
-    setOptions(options.concat(newOption))
-    fakeIng.push({
-      id: newOption.id,
-      name: newOption.label,
-      isDry: true,
-      amount: '0',
-      description: '',
-    })
-    setValue(newOption)
-  }
-
-  const filterOptions = (candidate, input) => {
-    return candidate.data.__isNew__ || candidate.value.includes(input.toLowerCase())
-  }
+const CreatableIngredient = ({handleIngredientSelection, addIngredient, options, selectedValue, setSelectedValue}) => {  
 
   return (
     <CreatableSelect
       isClearable
-      onChange={newValue => setValue(newValue)}
-      onCreateOption={handleCreate}
-      onBlur={() => value ? handleBlur(value.id) : handleBlur(null)}
-      filterOption={filterOptions}
+      onChange={newValue => setSelectedValue(newValue)}
+      onCreateOption={addIngredient}
+      onBlur={() => selectedValue
+        ? handleIngredientSelection(selectedValue.id) 
+        : handleIngredientSelection(null)
+      }
       options={options}
-      value={value}
+      value={selectedValue}
     />
   )
 }
 CreatableIngredient.propTypes = {
-  handleBlur: PropTypes.func.isRequired,
+  handleIngredientSelection: PropTypes.func.isRequired,
+  addIngredient: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
-  setOptions: PropTypes.func.isRequired,
+  selectedValue: PropTypes.object,
+  setSelectedValue: PropTypes.func.isRequired,
 }
+
+
 
 // FINAL COMPONENT
 
 const IngredientsTable = () => {
-  const [options, setOptions] = useState(defaultOptions)
+  const queryClient = useQueryClient()
   const [showIngredientForm, setShowIngredientForm] = useState(false)
   const [{ingredients}, dispatch] = useContext(BuilderContext)
+  const [selectedValue, setSelectedValue] = useState({})
 
-  const dispatchIngredients = (ingr) => {
-    dispatch({
-      type: 'INGREDIENTS',
-      payload: ingr
-    })
+  const servedData = useQuery('ingredients', getIngredients, {
+    refetchOnWindowFocus: false,
+  })
+  const newIngredientMutation = useMutation(createIngredient, {
+    onSuccess: (newIng) => {
+      const optioned = createOption(newIng)
+      setSelectedValue(optioned)
+      queryClient.setQueryData('ingredients', options.concat(optioned))
+    }
+  })
+  
+  if(servedData.isLoading) { 
+    return <div>LOADING DATA</div>
+  }
+  if (servedData.isError) {
+    return <div>ERROR IN DATA</div>
   }
 
+  const options = servedData.data.map(i => (createOption(i)))
+
+  const addIngredient = async (name) => {
+    newIngredientMutation.mutate(
+      {
+        name,
+        description: '',
+        defaultAmount: 0,
+        isDry: true,
+      }
+    )
+  }
+  
+  const dispatchIngredients = (ingredientObject) => {
+    dispatch({
+      type: 'INGREDIENTS',
+      payload: ingredientObject
+    })
+  }
 
   const changeAmount = (id, amount) => {
     dispatchIngredients(ingredients
@@ -182,12 +173,14 @@ const IngredientsTable = () => {
   const handleIngredientSelection = (id) => {
     if(id === null){
       setShowIngredientForm(false)
+      return
     }
     // ensure no duplicates
     ingredients.filter(i => i.id === id).length
       ? dispatchIngredients(ingredients)
-      : dispatchIngredients(ingredients.concat(fakeIng.filter(i => i.id === id)))
+      : dispatchIngredients(ingredients.concat(options.filter(i => i.id === id)))
     setShowIngredientForm(false)
+    setSelectedValue({})
   }
 
 
@@ -226,7 +219,12 @@ const IngredientsTable = () => {
           <tr>
             <td colSpan='100%' className='text-center'>
               {showIngredientForm 
-                ? <CreatableIngredient handleBlur={handleIngredientSelection} options={options} setOptions={setOptions}/> 
+                ? <CreatableIngredient 
+                  handleIngredientSelection={handleIngredientSelection} 
+                  addIngredient={addIngredient} 
+                  options={options}
+                  selectedValue={selectedValue}
+                  setSelectedValue={setSelectedValue}/> 
                 : <button onClick={() => setShowIngredientForm(true)}>Add an Ingredient</button> }
             </td>
           </tr>

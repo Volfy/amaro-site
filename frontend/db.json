@@ -46,5 +46,34 @@
       "id": 2
     }
   ],
-  "ingredients": []
+  "ingredients": [
+    {
+      "name": "Wormwood",
+      "description": "Bittering agent",
+      "defaultAmount": 1,
+      "isDry": true,
+      "id": 1
+    },
+    {
+      "name": "Vodka",
+      "description": "Solvent",
+      "defaultAmount": 300,
+      "isDry": false,
+      "id": 2
+    },
+    {
+      "name": "Orange peel",
+      "description": "citrus, warm, spicy",
+      "defaultAmount": 3,
+      "isDry": true,
+      "id": 3
+    },
+    {
+      "name": "Something new!",
+      "description": "",
+      "defaultAmount": 0,
+      "isDry": true,
+      "id": 4
+    }
+  ]
 }
