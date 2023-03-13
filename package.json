@@ -4,6 +4,10 @@
   "description": "A Liqueur and Syrup recipe builder site using React (with Vite) and TailwindCSS.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "git": "git add . && git commit -m",
+    "build": "rm -rf dist && cd frontend/ && npm run build && cp -r dist ../dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +21,12 @@
   },
   "homepage": "https://github.com/Volfy/amaro-site#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
   }
 }

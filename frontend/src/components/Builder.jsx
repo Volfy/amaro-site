@@ -16,7 +16,8 @@ const Builder = () => {
     
     newRecipeMutation.mutate({ 
       ...recipe,
-      ingredients: recipe.ingredients.map(i => ({id: i.id, amount: i.amount || i.defaultAmount})),
+      ingredients: recipe.ingredients.map(i => 
+        ({ingredient: i.id, amount: i.amount || i.defaultAmount})),
       process: recipe.process.map(i => i.content),
       notes: recipe.notes.map(i => i.content)
     })
