@@ -1,6 +1,9 @@
 import axios from 'axios'
 const baseUrl = 'http://localhost:3001/api'
 
+export const getRecipes = () =>
+  axios.get(`${baseUrl}/recipes`).then(res => res.data)
+
 export const createRecipe = newRecipe => 
   axios.post(`${baseUrl}/recipes`, newRecipe).then(res => res.data)
 

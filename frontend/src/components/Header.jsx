@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const Header = () => (
   <header className="mt-8 w-full
     flex flex-col md:flex-row justify-center items-center md:items-end">
@@ -15,15 +17,9 @@ const Header = () => (
       </div>
         
       <nav className="flex flex-row justify-between gap-12 text-xl">
-        <a href="http://" className="text-blue-400">
-          Builder
-        </a>
-        <a href="http://" className="text-blue-400">
-          Ingredients
-        </a>
-        <a href="http://" className="text-blue-400">
-          Recipes
-        </a>
+        <Link className="text-blue-400" to='/'>Builder</Link>
+        <Link className="text-blue-400" to='/ingredients'>Ingredients</Link>
+        <Link className="text-blue-400" to='/recipes'>Recipes</Link>
       </nav>
     </div>
   </header>
