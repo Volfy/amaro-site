@@ -2,6 +2,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Builder from './components/Builder'
 import Recipes from './components/Recipes'
+import Recipe from './components/Recipe'
 import Ingredients from './components/Ingredients'
 import { BuilderContextProvider } from './BuilderContext'
 import { 
@@ -29,6 +30,7 @@ function App() {
           <Routes>
             <Route path='/' element={<BuilderWrapped />}/>
             <Route path='/recipes' element={<Recipes />}/>
+            <Route path='/recipes/:id' element={<Recipe />} />
             <Route path='/ingredients' element={<Ingredients />}/>
           </Routes>
           
