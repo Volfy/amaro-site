@@ -1,5 +1,4 @@
-import { getRecipes } from '../requests'
-import { useQuery } from 'react-query'
+import { useQueryClient } from 'react-query'
 import { 
   Link
 } from 'react-router-dom'
@@ -14,13 +13,14 @@ const RecipeCard = (props) => {
 }
 
 const Recipes = () => {
-  const recipesList = useQuery('recipes', getRecipes)
+  const queryClient = useQueryClient()
+  const recipesList = queryClient.getQueryData('recipes')
 
   return (
     <div>
-      <h2 className='text-4xl h-16 text-center'>Recipes List</h2>
+      <h2 className='text-4xl h-16 text-center'>Recipe List</h2>
         <ul className='flex gap-10 flex-wrap justify-center'>
-            {recipesList.isSuccess && recipesList.data.map(r => {
+            {recipesList.map(r => {
               let arrIng = [...r.ingredients.map(i => i.ingredient.name)]
               const length = arrIng.length
               arrIng = arrIng.slice(0, 7)
